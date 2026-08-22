@@ -12,6 +12,7 @@
 .admin-login-box .logo { text-align: center; margin-bottom: 8px; }
 .admin-login-btn { width: 100%; margin-top: 8px; }
 .admin-erro { color: #ef4444; font-size: 13px; min-height: 16px; }
+.admin-upload-status { color: var(--text-secondary); font-size: 12px; min-height: 14px; }
 
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-group label { font-size: 13px; color: var(--text-secondary); font-weight: 500; }

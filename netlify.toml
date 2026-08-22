@@ -34,3 +34,8 @@
   from = "/api/admin/produtos"
   to = "/.netlify/functions/admin-produtos"
   status = 200
+
+[[redirects]]
+  from = "/api/admin/upload-imagem"
+  to = "/.netlify/functions/admin-upload-imagem"
+  status = 200

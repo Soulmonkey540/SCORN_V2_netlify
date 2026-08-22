@@ -63,6 +63,8 @@ No painel do site → **Site configuration → Environment variables**, adicione
 | `SITE_URL` | A URL pública do seu site no Netlify, ex: `https://seusite.netlify.app` (sem barra no final). |
 | `CALLMEBOT_PHONE` | Seu número de WhatsApp com DDI, ex: `5538999999999`. |
 | `CALLMEBOT_APIKEY` | Chave gerada pelo CallMeBot (veja seção 6). |
+| `SUPABASE_URL` | URL do seu projeto Supabase. No painel do Supabase: **Project Settings → API → Project URL**. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Chave de serviço (privada, com acesso total). No mesmo lugar: **Project Settings → API → service_role key**. **Nunca coloque essa chave no front-end, ela fica só nas variáveis de ambiente do servidor.** |
 
 Depois de adicionar, vá em **Deploys → Trigger deploy → Deploy site** para
 essas variáveis passarem a valer.
@@ -89,6 +91,21 @@ código, usando a variável `SITE_URL`.
 2. Envie a mensagem exata: `I allow callmebot to send me messages`
 3. Copie a **API Key** que o bot responder.
 4. Configure `CALLMEBOT_PHONE` e `CALLMEBOT_APIKEY` no Netlify.
+
+---
+
+## 6.5. Criar o bucket de imagens no Supabase Storage
+
+O upload de fotos de produto no painel admin precisa de um bucket criado
+uma única vez:
+
+1. No painel do Supabase → **Storage** → **New bucket**.
+2. Nome do bucket: `produtos-imagens` (exatamente esse nome, é o que o
+   código espera).
+3. Marque como **Public bucket** (senão as imagens não aparecem no site
+   pros clientes).
+4. Pronto — a partir daqui, o botão de upload no painel admin (`/admin.html`)
+   já funciona.
 
 ---
 

@@ -1,8 +1,24 @@
 // admin.js — dashboard de gerenciamento de produtos
 
+// --- SISTEMA DE TEMA (mesma lógica da loja) ---
+const themeToggleBtn = document.getElementById('theme-toggle');
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+}
+themeToggleBtn.addEventListener('click', () => {
+    const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+});
+initTheme();
+
 const API_LOGIN = '/api/admin/login';
 const API_LOGOUT = '/api/admin/logout';
 const API_PRODUTOS_ADMIN = '/api/admin/produtos';
+const API_UPLOAD_IMAGEM = '/api/admin/upload-imagem';
 
 const loginScreen = document.getElementById('login-screen');
 const adminPanel = document.getElementById('admin-panel');
@@ -101,6 +117,7 @@ function abrirModalCriacao() {
     document.getElementById('produto-id').value = '';
     document.getElementById('produto-modal-titulo').textContent = 'Novo Produto';
     produtoErro.textContent = '';
+    document.getElementById('upload-status').textContent = '';
     abrirModal();
 }
 
@@ -130,6 +147,71 @@ function abrirModal() {
 function fecharModal() {
     produtoOverlay.classList.remove('active');
     produtoModal.classList.remove('open');
+}
+
+// --- UPLOAD DE IMAGEM ---
+document.getElementById('produto-arquivo-imagem').addEventListener('change', async (e) => {
+    const arquivo = e.target.files[0];
+    if (!arquivo) return;
+
+    const statusEl = document.getElementById('upload-status');
+    statusEl.textContent = 'Comprimindo e enviando...';
+
+    try {
+        const { base64, contentType } = await comprimirImagem(arquivo);
+
+        const resp = await fetch(API_UPLOAD_IMAGEM, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                fileName: arquivo.name,
+                contentType,
+                fileBase64: base64,
+            })
+        });
+        const dados = await resp.json();
+
+        if (!resp.ok) {
+            statusEl.textContent = dados.error || 'Erro ao enviar imagem';
+            return;
+        }
+
+        document.getElementById('produto-img').value = dados.url;
+        statusEl.textContent = 'Imagem enviada com sucesso.';
+    } catch (error) {
+        console.error(error);
+        statusEl.textContent = 'Erro ao processar a imagem.';
+    }
+});
+
+// Redimensiona a imagem para no máximo 1600px de largura e comprime como
+// JPEG (qualidade 80%) direto no navegador, antes de enviar — isso evita
+// estourar o limite de tamanho de requisição e economiza espaço de armazenamento.
+function comprimirImagem(arquivo) {
+    return new Promise((resolve, reject) => {
+        const leitor = new FileReader();
+        leitor.onload = (evento) => {
+            const imagem = new Image();
+            imagem.onload = () => {
+                const larguraMaxima = 1600;
+                const escala = Math.min(1, larguraMaxima / imagem.width);
+                const canvas = document.createElement('canvas');
+                canvas.width = imagem.width * escala;
+                canvas.height = imagem.height * escala;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(imagem, 0, 0, canvas.width, canvas.height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                const base64 = dataUrl.split(',')[1];
+                resolve({ base64, contentType: 'image/jpeg' });
+            };
+            imagem.onerror = reject;
+            imagem.src = evento.target.result;
+        };
+        leitor.onerror = reject;
+        leitor.readAsDataURL(arquivo);
+    });
 }
 
 produtoForm.addEventListener('submit', async (e) => {

@@ -30,6 +30,7 @@
         <header class="top-header">
             <h1 class="logo">SCORN Admin</h1>
             <div class="header-actions">
+                <button id="theme-toggle" class="theme-btn" aria-label="Alternar tema">🌙</button>
                 <button id="novo-produto-btn" class="cart-btn">+ Novo Produto</button>
                 <button id="logout-btn" class="theme-btn">Sair</button>
             </div>
@@ -88,7 +89,12 @@
                 <input type="number" id="produto-estoque" min="0" required>
             </div>
             <div class="form-group">
-                <label for="produto-img">URL da imagem</label>
+                <label for="produto-arquivo-imagem">Foto do produto</label>
+                <input type="file" id="produto-arquivo-imagem" accept="image/*">
+                <p id="upload-status" class="admin-upload-status"></p>
+            </div>
+            <div class="form-group">
+                <label for="produto-img">URL da imagem (preenchida automaticamente, ou cole uma manualmente)</label>
                 <input type="text" id="produto-img">
             </div>
             <div class="admin-checkbox-row">
