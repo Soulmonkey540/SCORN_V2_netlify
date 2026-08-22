@@ -1,0 +1,36 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+# Mantém as mesmas URLs /api/... que o front-end já usa (script.js, admin.js),
+# só redirecionando por baixo dos panos para as funções do Netlify.
+
+[[redirects]]
+  from = "/api/produtos"
+  to = "/.netlify/functions/produtos"
+  status = 200
+
+[[redirects]]
+  from = "/api/checkout"
+  to = "/.netlify/functions/checkout"
+  status = 200
+
+[[redirects]]
+  from = "/api/webhook-mercadopago"
+  to = "/.netlify/functions/webhook-mercadopago"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/login"
+  to = "/.netlify/functions/admin-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/logout"
+  to = "/.netlify/functions/admin-logout"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/produtos"
+  to = "/.netlify/functions/admin-produtos"
+  status = 200
