@@ -1,0 +1,260 @@
+/* =========================================
+   SCORN - TEMA NEO-BRUTALIST / UNDERGROUND
+   ========================================= */
+
+:root {
+    --bg-main: #000000;
+    --text-primary: #ffffff;
+    --text-secondary: #999999;
+    --logo-font: 'Cormorant Garamond', serif;
+    --menu-font: 'Inter', sans-serif;
+    
+    --transition: 0.1s;
+
+    /* Variáveis extras (compatibilidade com o painel admin) */
+    --bg-surface: #000000;
+    --border-color: #ffffff;
+    --accent-color: #ffffff;
+    --accent-color-hover: #cccccc;
+    --accent-text: #000000;
+    --hover-color: #111111;
+    --font-display: var(--logo-font);
+    --font-body: var(--menu-font);
+}
+
+/* Reset Global */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    font-family: var(--menu-font);
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* CABEÇALHO (Header) */
+.top-header {
+    background-color: var(--bg-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 0;
+    width: 100%;
+    z-index: 10;
+}
+
+/* O Logo 'SCORN' Brutalista */
+.logo {
+    font-family: var(--logo-font);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #fff;
+    
+    text-shadow: 
+        2px 0 0 #fff, -2px 0 0 #fff,
+        0 2px 0 #fff, 0 -2px 0 #fff,
+        2px 2px 0 #fff, -2px -2px 0 #fff,
+        2px -2px 0 #fff, -2px 2px 0 #fff,
+        4px 4px 0 rgba(0,0,0,0.5);
+}
+.logo-container { margin-bottom: 25px; cursor: pointer; }
+
+/* Logo em imagem (logo.png) — é um wordmark bem fino e largo (proporção
+   ~15:1), então dimensiona pela largura (com altura automática) em vez de
+   forçar uma altura fixa, que achatava a arte a quase nada. */
+.site-logo {
+    width: min(70vw, 360px);
+    height: auto;
+    display: block;
+}
+
+/* O Menu Horizontal */
+.nav-menu {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+}
+
+.menu-link {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.menu-link:hover, .menu-link.active {
+    text-decoration: underline;
+}
+
+.cart-link { cursor: pointer; }
+
+/* CONTEÚDO PRINCIPAL (Main Content) */
+.main-content {
+    flex: 1;
+    background-color: var(--bg-main);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 60px;
+}
+
+/* Regras de visualização de conteúdo */
+.content-view {
+    display: none;
+    width: 100%;
+    animation: brutalFade 0.2s steps(4, end);
+}
+.content-view.active { display: block; }
+@keyframes brutalFade { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+#default-content.content-view.active { flex: 1; min-height: 40vh; }
+
+/* RODAPÉ (Footer) */
+.bottom-footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 0 40px 0;
+    position: relative;
+    background-color: var(--bg-main);
+    z-index: 5;
+}
+
+.footer-image-container {
+    max-width: 800px;
+    width: 90%;
+    height: auto;
+    overflow: hidden;
+}
+
+.footer-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.footer-image-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   ESTILOS DE FUNCIONALIDADE (INTEGRAÇÃO)
+   Catálogo, carrinho, checkout e PIX — mesma
+   linguagem visual: preto/branco, bordas retas,
+   sem sombra colorida, hover = inversão/sublinhado.
+   ========================================= */
+
+.filters-section { padding: 24px 20px 0; max-width: 1100px; margin: 0 auto; width: 100%; }
+.filters-wrapper { display: flex; gap: 24px; border: 1px solid var(--border-color); padding: 16px 20px; }
+.filter-group { display: flex; align-items: center; gap: 10px; }
+.filter-group label { font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); }
+.filter-group select {
+    background-color: var(--bg-main); color: var(--text-primary);
+    border: 1px solid var(--border-color); padding: 6px 10px;
+    font-family: var(--menu-font); font-size: 13px;
+}
+
+.catalog-container { padding: 32px 20px; max-width: 1100px; margin: 0 auto; width: 100%; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+
+.product-card {
+    border: 1px solid var(--border-color); padding: 16px;
+    display: flex; flex-direction: column; background-color: var(--bg-main);
+    transition: var(--transition);
+}
+.product-card:hover { background-color: var(--hover-color); }
+.product-img { width: 100%; height: 260px; object-fit: cover; margin-bottom: 16px; filter: grayscale(15%); }
+.product-info { flex-grow: 1; }
+.product-name { font-size: 14px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.product-price { font-family: var(--logo-font); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.add-btn {
+    width: 100%; padding: 10px; background-color: transparent;
+    border: 1px solid var(--text-primary); color: var(--text-primary);
+    font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; margin-top: 12px; transition: var(--transition);
+}
+.add-btn:hover { background-color: var(--text-primary); color: var(--bg-main); }
+
+/* Carrinho (agora inline, não é mais gaveta) */
+.cart-items { max-width: 700px; margin: 32px auto 0; padding: 0 20px; display: flex; flex-direction: column; gap: 16px; }
+.cart-item { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+.cart-item-info h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 400; }
+.cart-item-info p { font-family: var(--logo-font); font-weight: 700; }
+.remove-btn { color: var(--text-secondary); background: none; border: none; cursor: pointer; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; }
+.remove-btn:hover { color: var(--text-primary); text-decoration: underline; }
+
+.checkout-form { display: flex; flex-direction: column; gap: 14px; padding-top: 8px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-secondary); }
+.form-group input {
+    width: 100%; padding: 10px 12px; background-color: var(--bg-main);
+    color: var(--text-primary); border: 1px solid var(--border-color);
+    font-family: var(--menu-font); font-size: 13px;
+}
+.form-group input:focus { outline: none; border-color: var(--text-primary); }
+
+.pix-container { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 20px 0; }
+.pix-container h4 { font-family: var(--logo-font); font-size: 18px; letter-spacing: 1px; }
+.pix-qrcode { width: 200px; height: 200px; border: 1px solid var(--border-color); }
+.pix-total { font-family: var(--logo-font); font-size: 24px; font-weight: 700; }
+.pix-copia-cola {
+    width: 100%; min-height: 70px; resize: none; padding: 10px;
+    background-color: var(--bg-main); color: var(--text-primary);
+    border: 1px solid var(--border-color); font-size: 11px; font-family: var(--menu-font);
+}
+.pix-aviso { font-size: 12px; color: var(--text-secondary); }
+
+.cart-footer { max-width: 700px; margin: 24px auto 0; padding: 24px 20px; border-top: 1px solid var(--border-color); }
+.cart-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; }
+.checkout-btn {
+    width: 100%; padding: 16px; background-color: var(--text-primary); color: var(--bg-main);
+    border: none; font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; cursor: pointer; transition: var(--transition);
+}
+.checkout-btn:hover { background-color: var(--accent-color-hover); }
+
+/* RESPONSIVIDADE MOBILE */
+@media (max-width: 768px) {
+    .logo { font-size: 28px; }
+    .site-logo { width: min(75vw, 280px); }
+    .nav-menu { gap: 15px; flex-wrap: wrap; }
+    .menu-link { font-size: 12px; padding: 5px; }
+    
+    .footer-image-container { max-width: 90%; }
+
+    .filters-wrapper { flex-direction: column; gap: 12px; }
+    .product-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .product-img { height: 200px; }
+}
+
+@media (max-width: 480px) {
+    .logo { font-size: 24px; letter-spacing: 3px; }
+    .site-logo { width: min(80vw, 220px); }
+    .nav-menu { flex-direction: column; align-items: center; gap: 8px; }
+    .footer-image-container { max-width: 95%; }
+    .product-grid { grid-template-columns: 1fr; }
+}

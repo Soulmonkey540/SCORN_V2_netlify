@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCORN - Official Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- CABEÇALHO -->
+        <header class="top-header">
+            <div class="logo-container" id="logo-container">
+                <img src="logo.png" alt="SCORN" class="site-logo">
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="menu-link" id="destaques-link">DESTAQUES</a>
+                <a href="#" class="menu-link" id="novidades-link">NOVIDADES</a>
+                <a href="#" class="menu-link cart-link" id="carrinho-link">CARRINHO (<span id="cart-count">0</span>)</a>
+            </nav>
+        </header>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            <!-- Área preta vazia inicial -->
+            <div id="default-content" class="content-view active"></div>
+
+            <!-- Catálogo completo (aberto ao clicar na logo) -->
+            <div id="catalogo-content" class="content-view">
+                <section class="filters-section">
+                    <div class="filters-wrapper">
+                        <div class="filter-group">
+                            <label for="filter-type">Tipo:</label>
+                            <select id="filter-type">
+                                <option value="all">Todos</option>
+                                <option value="camiseta">Camisetas</option>
+                                <option value="calca">Calças</option>
+                                <option value="casaco">Casacos</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-size">Tamanho:</label>
+                            <select id="filter-size">
+                                <option value="all">Todos</option>
+                                <option value="P">P</option>
+                                <option value="M">M</option>
+                                <option value="G">G</option>
+                                <option value="GG">GG</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+                <section id="catalog-container" class="catalog-container"></section>
+            </div>
+
+            <!-- Destaques -->
+            <div id="destaques-content" class="content-view">
+                <section id="destaques-container" class="catalog-container"></section>
+            </div>
+
+            <!-- Novidades -->
+            <div id="novidades-content" class="content-view">
+                <section id="novidades-container" class="catalog-container"></section>
+            </div>
+
+            <!-- Carrinho -->
+            <div id="carrinho-content" class="content-view">
+                <div id="cart-items" class="cart-items"></div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <span id="cart-total-price">R$ 0,00</span>
+                    </div>
+                    <button id="checkout-btn" class="checkout-btn">Finalizar via PIX</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- RODAPÉ -->
+        <footer class="bottom-footer">
+            <div class="footer-image-container">
+                <div class="footer-image-placeholder">Imagem de destaque em breve</div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
