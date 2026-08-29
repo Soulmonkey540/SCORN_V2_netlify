@@ -1,0 +1,13 @@
+# Dependências instaladas localmente — o host reinstala sozinho a partir do package.json
+node_modules/
+
+# Pasta de build/cache local do Netlify CLI
+.netlify/
+
+# Arquivos de ambiente local (se você criar um .env.local para testar na sua máquina)
+.env
+.env.local
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
