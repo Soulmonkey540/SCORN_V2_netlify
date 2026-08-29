@@ -67,6 +67,15 @@ body {
 }
 .logo-container { margin-bottom: 25px; cursor: pointer; }
 
+/* Logo em imagem (logo.png) — é um wordmark bem fino e largo (proporção
+   ~15:1), então dimensiona pela largura (com altura automática) em vez de
+   forçar uma altura fixa, que achatava a arte a quase nada. */
+.site-logo {
+    width: min(70vw, 360px);
+    height: auto;
+    display: block;
+}
+
 /* O Menu Horizontal */
 .nav-menu {
     display: flex;
@@ -231,6 +240,7 @@ body {
 /* RESPONSIVIDADE MOBILE */
 @media (max-width: 768px) {
     .logo { font-size: 28px; }
+    .site-logo { width: min(75vw, 280px); }
     .nav-menu { gap: 15px; flex-wrap: wrap; }
     .menu-link { font-size: 12px; padding: 5px; }
     
@@ -243,6 +253,7 @@ body {
 
 @media (max-width: 480px) {
     .logo { font-size: 24px; letter-spacing: 3px; }
+    .site-logo { width: min(80vw, 220px); }
     .nav-menu { flex-direction: column; align-items: center; gap: 8px; }
     .footer-image-container { max-width: 95%; }
     .product-grid { grid-template-columns: 1fr; }
