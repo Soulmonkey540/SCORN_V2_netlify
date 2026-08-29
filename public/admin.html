@@ -1,3 +1,4 @@
+<!-- public/admin.html — painel administrativo (login + CRUD de produtos) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -39,21 +40,32 @@
         </header>
 
         <main class="catalog-container">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Tipo</th>
-                        <th>Preço</th>
-                        <th>Tamanhos</th>
-                        <th>Estoque</th>
-                        <th>Destaque</th>
-                        <th>Novidade</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-produtos-tbody"></tbody>
-            </table>
+            <div class="admin-filter-bar">
+                <label for="admin-filter-colecao">Coleção</label>
+                <select id="admin-filter-colecao">
+                    <option value="all">Todas</option>
+                    <option value="frosty">Frosty</option>
+                    <option value="sakami">Sakami</option>
+                </select>
+            </div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                            <th>Coleção</th>
+                            <th>Preço</th>
+                            <th>Tamanhos</th>
+                            <th>Estoque</th>
+                            <th>Destaque</th>
+                            <th>Novidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-produtos-tbody"></tbody>
+                </table>
+            </div>
         </main>
     </div>
 
@@ -89,6 +101,34 @@
             <div class="form-group">
                 <label for="produto-estoque">Estoque</label>
                 <input type="number" id="produto-estoque" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="produto-colecao">Coleção</label>
+                <select id="produto-colecao" required>
+                    <option value="frosty">Frosty</option>
+                    <option value="sakami">Sakami</option>
+                </select>
+            </div>
+            <div class="admin-fieldset">
+                <p class="admin-fieldset-titulo">Embalagem para entrega (cálculo de frete)</p>
+                <div class="form-group">
+                    <label for="produto-peso">Peso embalado (kg)</label>
+                    <input type="number" id="produto-peso" step="0.01" min="0" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="produto-largura">Largura (cm)</label>
+                        <input type="number" id="produto-largura" step="0.1" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="produto-altura">Altura (cm)</label>
+                        <input type="number" id="produto-altura" step="0.1" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="produto-profundidade">Profund. (cm)</label>
+                        <input type="number" id="produto-profundidade" step="0.1" min="0" required>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label for="produto-arquivo-imagem">Foto do produto</label>

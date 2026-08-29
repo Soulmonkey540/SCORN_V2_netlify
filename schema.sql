@@ -20,6 +20,16 @@ CREATE TABLE IF NOT EXISTS produtos (
     criado_em TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Migração: coleção (Frosty/Sakami) + peso e dimensões da embalagem para
+-- entrega, usados futuramente no cálculo de frete via Superfrete.
+-- Rode este bloco separado se a tabela "produtos" já existia antes —
+-- ADD COLUMN IF NOT EXISTS é seguro rodar de novo.
+ALTER TABLE produtos ADD COLUMN IF NOT EXISTS colecao TEXT CHECK (colecao IN ('frosty', 'sakami'));
+ALTER TABLE produtos ADD COLUMN IF NOT EXISTS peso_kg NUMERIC(6,2);
+ALTER TABLE produtos ADD COLUMN IF NOT EXISTS largura_cm NUMERIC(6,1);
+ALTER TABLE produtos ADD COLUMN IF NOT EXISTS altura_cm NUMERIC(6,1);
+ALTER TABLE produtos ADD COLUMN IF NOT EXISTS profundidade_cm NUMERIC(6,1);
+
 -- Tabela de pedidos
 CREATE TABLE IF NOT EXISTS pedidos (
     id SERIAL PRIMARY KEY,

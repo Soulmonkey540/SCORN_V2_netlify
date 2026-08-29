@@ -1,3 +1,4 @@
+<!-- public/index.html — loja (visual neo-brutalista P&B) -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -70,6 +71,13 @@
             <div id="carrinho-content" class="content-view">
                 <div id="cart-items" class="cart-items"></div>
                 <div class="cart-footer">
+                    <div class="frete-calc">
+                        <div class="frete-calc-row">
+                            <input type="text" id="input-cep-frete" placeholder="CEP de destino" maxlength="9">
+                            <button id="calcular-frete-btn" type="button">Calcular frete</button>
+                        </div>
+                        <div id="frete-resultado" class="frete-resultado"></div>
+                    </div>
                     <div class="cart-total">
                         <span>Total:</span>
                         <span id="cart-total-price">R$ 0,00</span>

@@ -1,4 +1,4 @@
-// admin.js — dashboard de gerenciamento de produtos
+// public/admin.js — dashboard de gerenciamento de produtos
 
 const API_LOGIN = '/api/admin/login';
 const API_LOGOUT = '/api/admin/logout';
@@ -74,11 +74,17 @@ async function carregarProdutos() {
 }
 
 function renderizarTabela() {
+    const filtroColecao = document.getElementById('admin-filter-colecao').value;
+    const produtosFiltrados = filtroColecao === 'all'
+        ? produtosCache
+        : produtosCache.filter(p => p.colecao === filtroColecao);
+
     const tbody = document.getElementById('admin-produtos-tbody');
-    tbody.innerHTML = produtosCache.map(p => `
+    tbody.innerHTML = produtosFiltrados.map(p => `
         <tr>
             <td>${p.nome}</td>
             <td>${p.tipo}</td>
+            <td>${p.colecao === 'frosty' ? 'Frosty' : p.colecao === 'sakami' ? 'Sakami' : '—'}</td>
             <td>${Number(p.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
             <td>${(p.tamanhos || []).join(', ')}</td>
             <td>${p.estoque_total}</td>
@@ -91,6 +97,8 @@ function renderizarTabela() {
         </tr>
     `).join('');
 }
+
+document.getElementById('admin-filter-colecao').addEventListener('change', renderizarTabela);
 
 // --- MODAL CRIAR/EDITAR ---
 document.getElementById('novo-produto-btn').addEventListener('click', () => abrirModalCriacao());
@@ -116,6 +124,12 @@ function abrirModalEdicao(id) {
     document.getElementById('produto-preco').value = produto.preco;
     document.getElementById('produto-tamanhos').value = (produto.tamanhos || []).join(',');
     document.getElementById('produto-estoque').value = produto.estoque_total;
+    document.getElementById('produto-colecao').value = produto.colecao || 'frosty';
+    document.getElementById('produto-peso').value = produto.peso_kg ?? '';
+    const dimensoes = produto.dimensoes || {};
+    document.getElementById('produto-largura').value = dimensoes.largura_cm ?? '';
+    document.getElementById('produto-altura').value = dimensoes.altura_cm ?? '';
+    document.getElementById('produto-profundidade').value = dimensoes.profundidade_cm ?? '';
     document.getElementById('produto-img').value = produto.img || '';
     document.getElementById('produto-destaque').checked = !!produto.destaque;
     document.getElementById('produto-novidade').checked = !!produto.novidade;
@@ -210,6 +224,13 @@ produtoForm.addEventListener('submit', async (e) => {
         preco: parseFloat(document.getElementById('produto-preco').value),
         tamanhos: document.getElementById('produto-tamanhos').value.split(',').map(t => t.trim()).filter(Boolean),
         estoque_total: parseInt(document.getElementById('produto-estoque').value, 10),
+        colecao: document.getElementById('produto-colecao').value,
+        peso_kg: parseFloat(document.getElementById('produto-peso').value),
+        dimensoes: {
+            largura_cm: parseFloat(document.getElementById('produto-largura').value),
+            altura_cm: parseFloat(document.getElementById('produto-altura').value),
+            profundidade_cm: parseFloat(document.getElementById('produto-profundidade').value),
+        },
         img: document.getElementById('produto-img').value,
         destaque: document.getElementById('produto-destaque').checked,
         novidade: document.getElementById('produto-novidade').checked,

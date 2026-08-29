@@ -1,3 +1,5 @@
+// public/script.js — lógica da loja (catálogo, filtros, carrinho, frete e checkout PIX)
+
 // --- NAVEGAÇÃO ---
 const menuLinks = {
     'destaques-link': 'destaques-content',
@@ -35,8 +37,9 @@ document.getElementById('logo-container').addEventListener('click', () => {
 // --- DADOS (Netlify) ---
 const API_URL_PRODUTOS = '/api/produtos';
 const API_URL_CHECKOUT = '/api/checkout';
+const API_URL_FRETE = '/api/calcular-frete';
 
-const state = { produtos: [], carrinho: [] };
+const state = { produtos: [], carrinho: [], freteSelecionado: null };
 
 async function fetchProdutos() {
     try {
@@ -101,6 +104,7 @@ function adicionarAoCarrinho(id) {
     if (prod) {
         state.carrinho.push({ ...prod, cartId: Date.now() });
         document.getElementById('cart-count').textContent = state.carrinho.length;
+        resetarFrete();
 
         const link = document.getElementById('carrinho-link');
         link.style.transform = 'scale(1.1)';
@@ -111,7 +115,14 @@ function adicionarAoCarrinho(id) {
 function removerDoCarrinho(cartId) {
     state.carrinho = state.carrinho.filter(item => item.cartId !== cartId);
     document.getElementById('cart-count').textContent = state.carrinho.length;
+    resetarFrete();
     renderizarCarrinho();
+}
+
+function resetarFrete() {
+    state.freteSelecionado = null;
+    const resultadoEl = document.getElementById('frete-resultado');
+    if (resultadoEl) resultadoEl.innerHTML = '';
 }
 
 function renderizarCarrinho() {
@@ -139,6 +150,10 @@ function renderizarCarrinho() {
         `;
     }).join('');
 
+    if (state.freteSelecionado) {
+        total += Object.values(state.freteSelecionado).reduce((soma, valor) => soma + valor, 0);
+    }
+
     const dadosFormHtml = `
         <div class="checkout-form">
             <div class="form-group">
@@ -158,6 +173,85 @@ function renderizarCarrinho() {
 
     container.innerHTML = itensHtml + dadosFormHtml;
     totalEl.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+// --- FRETE (SuperFrete) ---
+document.getElementById('calcular-frete-btn').addEventListener('click', calcularFrete);
+
+async function calcularFrete() {
+    const resultadoEl = document.getElementById('frete-resultado');
+    const cep = document.getElementById('input-cep-frete').value.replace(/\D/g, '');
+
+    if (state.carrinho.length === 0) {
+        resultadoEl.innerHTML = '<p class="frete-indisponivel">Adicione itens ao carrinho primeiro.</p>';
+        return;
+    }
+    if (cep.length !== 8) {
+        resultadoEl.innerHTML = '<p class="frete-indisponivel">Informe um CEP válido.</p>';
+        return;
+    }
+
+    resultadoEl.innerHTML = '<p>Calculando frete...</p>';
+
+    try {
+        const itens = state.carrinho.map(item => ({
+            colecao: item.colecao,
+            peso_kg: item.peso_kg,
+            preco: item.preco,
+            quantidade: 1,
+        }));
+
+        const resposta = await fetch(API_URL_FRETE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cepDestino: cep, itens })
+        });
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            resultadoEl.innerHTML = `<p class="frete-indisponivel">${dados.error || 'Erro ao calcular frete'}</p>`;
+            return;
+        }
+
+        renderizarFrete(dados.fretes);
+    } catch (error) {
+        console.error('Erro ao calcular frete:', error);
+        resultadoEl.innerHTML = '<p class="frete-indisponivel">Erro de conexão ao calcular frete.</p>';
+    }
+}
+
+function renderizarFrete(fretes) {
+    const resultadoEl = document.getElementById('frete-resultado');
+    state.freteSelecionado = {};
+
+    const nomeColecao = (colecao) => colecao === 'frosty' ? 'Frosty' : colecao === 'sakami' ? 'Sakami' : colecao;
+
+    const blocosHtml = fretes.map(frete => {
+        if (!frete.disponivel) {
+            return `<p class="frete-indisponivel">${nomeColecao(frete.colecao)}: ${frete.motivo}</p>`;
+        }
+        if (frete.opcoes.length === 0) {
+            return `<p class="frete-indisponivel">${nomeColecao(frete.colecao)}: nenhuma opção de frete pra esse CEP.</p>`;
+        }
+
+        // Usa a opção mais barata de cada coleção pra compor o total exibido.
+        state.freteSelecionado[frete.colecao] = frete.opcoes[0].preco;
+
+        const opcoesHtml = frete.opcoes.map(op => {
+            const preco = op.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            return `<li>${op.servico}${op.transportadora ? ' — ' + op.transportadora : ''} — ${preco} (${op.prazoDias} dias úteis)</li>`;
+        }).join('');
+
+        return `
+            <div class="frete-colecao">
+                <p class="frete-colecao-titulo">${nomeColecao(frete.colecao)}</p>
+                <ul>${opcoesHtml}</ul>
+            </div>
+        `;
+    }).join('');
+
+    resultadoEl.innerHTML = blocosHtml;
+    renderizarCarrinho();
 }
 
 // --- CHECKOUT / PIX ---
