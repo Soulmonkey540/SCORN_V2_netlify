@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCORN — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin.css">
 </head>
@@ -11,7 +14,7 @@
     <!-- TELA DE LOGIN -->
     <div id="login-screen" class="admin-login-screen">
         <form id="login-form" class="admin-login-box">
-            <h1 class="logo">SCORN Admin</h1>
+            <h1 class="logo"><img src="logo.png" alt="SCORN"></h1>
             <div class="form-group">
                 <label for="login-email">Email</label>
                 <input type="email" id="login-email" required>
@@ -28,9 +31,8 @@
     <!-- PAINEL ADMIN -->
     <div id="admin-panel" class="admin-panel" style="display:none;">
         <header class="top-header">
-            <h1 class="logo">SCORN Admin</h1>
+            <h1 class="logo"><img src="logo.png" alt="SCORN"></h1>
             <div class="header-actions">
-                <button id="theme-toggle" class="theme-btn" aria-label="Alternar tema">🌙</button>
                 <button id="novo-produto-btn" class="cart-btn">+ Novo Produto</button>
                 <button id="logout-btn" class="theme-btn">Sair</button>
             </div>

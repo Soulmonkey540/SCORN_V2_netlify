@@ -1,47 +1,35 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="light">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCORN</title>
+    <title>SCORN - Official Site</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Overlay para fechar menu/carrinho no mobile -->
-        <div id="overlay" class="overlay"></div>
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <h2>Menu</h2>
-                <button id="close-sidebar" class="mobile-only-btn">✕</button>
+        <!-- CABEÇALHO -->
+        <header class="top-header">
+            <div class="logo-container" id="logo-container">
+                <div class="logo">SCORN</div>
             </div>
             <nav class="nav-menu">
-                <a href="#" data-target="view-catalogo" class="menu-item active">Catálogo</a>
-                <a href="#" data-target="view-destaques" class="menu-item">Destaques</a>
-                <a href="#" data-target="view-novidades" class="menu-item">Novidades</a>
+                <a href="#" class="menu-link" id="destaques-link">DESTAQUES</a>
+                <a href="#" class="menu-link" id="novidades-link">NOVIDADES</a>
+                <a href="#" class="menu-link cart-link" id="carrinho-link">CARRINHO (<span id="cart-count">0</span>)</a>
             </nav>
-        </aside>
+        </header>
 
-        <!-- Conteúdo Principal -->
+        <!-- CONTEÚDO PRINCIPAL -->
         <main class="main-content">
-            <!-- Header -->
-            <header class="top-header">
-                <div class="header-left">
-                    <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Abrir menu">☰</button>
-                    <h1 class="logo">SCORN</h1>
-                </div>
-                <div class="header-actions">
-                    <button id="theme-toggle" class="theme-btn" aria-label="Alternar tema">🌙</button>
-                    <button id="cart-btn" class="cart-btn">
-                        Carrinho (<span id="cart-count">0</span>)
-                    </button>
-                </div>
-            </header>
+            <!-- Área preta vazia inicial -->
+            <div id="default-content" class="content-view active"></div>
 
-            <!-- VIEW: Catálogo -->
-            <div id="view-catalogo" class="view-section active">
+            <!-- Catálogo completo (aberto ao clicar na logo) -->
+            <div id="catalogo-content" class="content-view">
                 <section class="filters-section">
                     <div class="filters-wrapper">
                         <div class="filter-group">
@@ -68,42 +56,35 @@
                 <section id="catalog-container" class="catalog-container"></section>
             </div>
 
-            <!-- VIEW: Destaques -->
-            <div id="view-destaques" class="view-section">
-                <div class="page-header">
-                    <h2>Mais Vendidos & Destaques</h2>
-                    <p>As peças mais cobiçadas do momento.</p>
-                </div>
+            <!-- Destaques -->
+            <div id="destaques-content" class="content-view">
                 <section id="destaques-container" class="catalog-container"></section>
             </div>
 
-            <!-- VIEW: Novidades -->
-            <div id="view-novidades" class="view-section">
-                <div class="page-header">
-                    <h2>Últimos Lançamentos</h2>
-                    <p>Confira o que acabou de chegar no nosso estoque.</p>
-                </div>
+            <!-- Novidades -->
+            <div id="novidades-content" class="content-view">
                 <section id="novidades-container" class="catalog-container"></section>
             </div>
-        </main>
-    </div>
 
-    <!-- Modal do Carrinho -->
-    <div id="cart-sidebar" class="cart-sidebar">
-        <div class="cart-header">
-            <h2>Seu Carrinho</h2>
-            <button id="close-cart" class="close-cart-btn">✕</button>
-        </div>
-        <div id="cart-items" class="cart-items">
-            <!-- Itens do carrinho aparecerão aqui -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="cart-total-price">R$ 0,00</span>
+            <!-- Carrinho -->
+            <div id="carrinho-content" class="content-view">
+                <div id="cart-items" class="cart-items"></div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <span id="cart-total-price">R$ 0,00</span>
+                    </div>
+                    <button id="checkout-btn" class="checkout-btn">Finalizar via PIX</button>
+                </div>
             </div>
-            <button id="checkout-btn" class="checkout-btn">Finalizar via PIX</button>
-        </div>
+        </main>
+
+        <!-- RODAPÉ -->
+        <footer class="bottom-footer">
+            <div class="footer-image-container">
+                <div class="footer-image-placeholder">Imagem de destaque em breve</div>
+            </div>
+        </footer>
     </div>
 
     <script src="script.js"></script>

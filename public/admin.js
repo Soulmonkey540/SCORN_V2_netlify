@@ -1,20 +1,5 @@
 // admin.js — dashboard de gerenciamento de produtos
 
-// --- SISTEMA DE TEMA (mesma lógica da loja) ---
-const themeToggleBtn = document.getElementById('theme-toggle');
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-}
-themeToggleBtn.addEventListener('click', () => {
-    const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-});
-initTheme();
-
 const API_LOGIN = '/api/admin/login';
 const API_LOGOUT = '/api/admin/logout';
 const API_PRODUTOS_ADMIN = '/api/admin/produtos';

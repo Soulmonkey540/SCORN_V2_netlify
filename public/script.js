@@ -1,61 +1,39 @@
-// --- SISTEMA DE TEMA ---
-const themeToggleBtn = document.getElementById('theme-toggle');
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    themeToggleBtn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
-}
-themeToggleBtn.addEventListener('click', () => {
-    const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    themeToggleBtn.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-});
-initTheme();
+// --- NAVEGAÇÃO ---
+const menuLinks = {
+    'destaques-link': 'destaques-content',
+    'novidades-link': 'novidades-content',
+    'carrinho-link': 'carrinho-content'
+};
 
-// --- SISTEMA MOBILE (MENU E OVERLAY) ---
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const cartSidebar = document.getElementById('cart-sidebar');
+const linkElements = document.querySelectorAll('.menu-link');
+const contentViews = document.querySelectorAll('.content-view');
 
-document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-    sidebar.classList.add('open');
-    overlay.classList.add('active');
-});
-document.getElementById('close-sidebar').addEventListener('click', closeOverlays);
-overlay.addEventListener('click', closeOverlays);
-
-function closeOverlays() {
-    sidebar.classList.remove('open');
-    cartSidebar.classList.remove('open');
-    overlay.classList.remove('active');
+function mostrarView(viewId) {
+    contentViews.forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
 }
 
-// --- NAVEGAÇÃO SPA (Single Page Application) ---
-const menuItems = document.querySelectorAll('.menu-item');
-const views = document.querySelectorAll('.view-section');
-
-menuItems.forEach(item => {
-    item.addEventListener('click', (e) => {
+linkElements.forEach(link => {
+    link.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        // Atualiza botões ativos
-        menuItems.forEach(btn => btn.classList.remove('active'));
-        e.target.classList.add('active');
 
-        // Troca a View
-        const targetView = e.target.getAttribute('data-target');
-        views.forEach(view => {
-            view.classList.remove('active');
-            if (view.id === targetView) view.classList.add('active');
-        });
+        linkElements.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
 
-        if (window.innerWidth <= 768) closeOverlays(); // Fecha menu no mobile
+        mostrarView(menuLinks[link.id]);
+
+        if (link.id === 'carrinho-link') renderizarCarrinho();
     });
 });
 
-// --- DADOS (VERCEL) ---
-const API_URL_PRODUTOS = '/api/produtos'; 
+// Clicar na logo abre o catálogo completo (com filtros)
+document.getElementById('logo-container').addEventListener('click', () => {
+    linkElements.forEach(l => l.classList.remove('active'));
+    mostrarView('catalogo-content');
+});
+
+// --- DADOS (Netlify) ---
+const API_URL_PRODUTOS = '/api/produtos';
 const API_URL_CHECKOUT = '/api/checkout';
 
 const state = { produtos: [], carrinho: [] };
@@ -66,10 +44,9 @@ async function fetchProdutos() {
         if (!response.ok) throw new Error('Falha ao buscar produtos');
         const data = await response.json();
 
-        // O banco guarda preço como string numérica (NUMERIC) — garante que vira Number
         state.produtos = data.map(p => ({ ...p, preco: Number(p.preco) }));
-        
-        aplicarFiltros(); // Renderiza catálogo principal
+
+        aplicarFiltros();
         renderizarSecaoCustomizada(state.produtos.filter(p => p.destaque), 'destaques-container');
         renderizarSecaoCustomizada(state.produtos.filter(p => p.novidade), 'novidades-container');
     } catch (error) {
@@ -96,8 +73,8 @@ function criarCardProduto(produto) {
 function aplicarFiltros() {
     const tipo = document.getElementById('filter-type').value;
     const tam = document.getElementById('filter-size').value;
-    
-    const filtrados = state.produtos.filter(p => 
+
+    const filtrados = state.produtos.filter(p =>
         (tipo === 'all' || p.tipo === tipo) && (tam === 'all' || p.tamanhos.includes(tam))
     );
     renderizarSecaoCustomizada(filtrados, 'catalog-container');
@@ -113,29 +90,21 @@ function renderizarSecaoCustomizada(produtos, containerId) {
     const grid = document.createElement('div');
     grid.className = 'product-grid';
     grid.innerHTML = produtos.map(p => criarCardProduto(p)).join('');
-    
+
     container.innerHTML = '';
     container.appendChild(grid);
 }
 
-// --- CARRINHO E CHECKOUT ---
-document.getElementById('cart-btn').addEventListener('click', () => {
-    cartSidebar.classList.add('open');
-    overlay.classList.add('active');
-    renderizarCarrinho();
-});
-document.getElementById('close-cart').addEventListener('click', closeOverlays);
-
+// --- CARRINHO ---
 function adicionarAoCarrinho(id) {
     const prod = state.produtos.find(p => p.id === id);
     if (prod) {
-        // Para simplificar, gera um ID único para cada item no carrinho (permite mesma roupa 2x)
-        state.carrinho.push({ ...prod, cartId: Date.now() }); 
+        state.carrinho.push({ ...prod, cartId: Date.now() });
         document.getElementById('cart-count').textContent = state.carrinho.length;
-        
-        const btn = document.getElementById('cart-btn');
-        btn.style.transform = 'scale(1.1)';
-        setTimeout(() => btn.style.transform = 'scale(1)', 200);
+
+        const link = document.getElementById('carrinho-link');
+        link.style.transform = 'scale(1.1)';
+        setTimeout(() => link.style.transform = 'scale(1)', 200);
     }
 }
 
@@ -148,7 +117,7 @@ function removerDoCarrinho(cartId) {
 function renderizarCarrinho() {
     const container = document.getElementById('cart-items');
     const totalEl = document.getElementById('cart-total-price');
-    
+
     if (state.carrinho.length === 0) {
         container.innerHTML = '<p>Seu carrinho está vazio.</p>';
         totalEl.textContent = 'R$ 0,00';
@@ -170,18 +139,17 @@ function renderizarCarrinho() {
         `;
     }).join('');
 
-    // Formulário de dados de entrega — usa os valores já digitados anteriormente, se existirem
     const dadosFormHtml = `
         <div class="checkout-form">
-            <div class="filter-group form-group">
+            <div class="form-group">
                 <label for="input-nome">Nome:</label>
                 <input type="text" id="input-nome" placeholder="Seu nome completo" value="${state.dadosCliente?.nome || ''}">
             </div>
-            <div class="filter-group form-group">
+            <div class="form-group">
                 <label for="input-telefone">Telefone (WhatsApp):</label>
                 <input type="tel" id="input-telefone" placeholder="(38) 99999-9999" value="${state.dadosCliente?.telefone || ''}">
             </div>
-            <div class="filter-group form-group">
+            <div class="form-group">
                 <label for="input-endereco">Endereço de entrega:</label>
                 <input type="text" id="input-endereco" placeholder="Rua, número, bairro, cidade" value="${state.dadosCliente?.endereco || ''}">
             </div>
@@ -192,7 +160,7 @@ function renderizarCarrinho() {
     totalEl.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
-// INTEGRAÇÃO COM VERCEL (ENVIAR PEDIDO E GERAR PIX)
+// --- CHECKOUT / PIX ---
 document.getElementById('checkout-btn').addEventListener('click', async () => {
     if (state.carrinho.length === 0) return alert("Adicione itens ao carrinho!");
 
@@ -205,7 +173,6 @@ document.getElementById('checkout-btn').addEventListener('click', async () => {
         return;
     }
 
-    // Guarda os dados preenchidos para o caso do carrinho ser reaberto
     state.dadosCliente = { nome, telefone, endereco };
 
     const btn = document.getElementById('checkout-btn');
@@ -234,8 +201,6 @@ document.getElementById('checkout-btn').addEventListener('click', async () => {
 
         exibirQrCodePix(dadosPagamento);
 
-        // Limpa carrinho após gerar o PIX com sucesso (o pagamento em si é
-        // confirmado depois, pelo webhook, que baixa o estoque de fato)
         state.carrinho = [];
         document.getElementById('cart-count').textContent = '0';
 

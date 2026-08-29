@@ -9,7 +9,8 @@
     border-radius: 8px; padding: 32px; width: 100%; max-width: 340px;
     display: flex; flex-direction: column; gap: 16px;
 }
-.admin-login-box .logo { text-align: center; margin-bottom: 8px; }
+.admin-login-box .logo { justify-content: center; margin-bottom: 8px; }
+.admin-login-box .logo img { height: 36px; }
 .admin-login-btn { width: 100%; margin-top: 8px; }
 .admin-erro { color: #ef4444; font-size: 13px; min-height: 16px; }
 .admin-upload-status { color: var(--text-secondary); font-size: 12px; min-height: 14px; }
@@ -40,6 +41,7 @@
 }
 .admin-modal.open { display: block; }
 .admin-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border-color); }
+.admin-modal-header h2 { font-family: var(--font-display); font-weight: 600; }
 .admin-modal-form { display: flex; flex-direction: column; gap: 14px; padding: 24px; }
 .admin-checkbox-row { display: flex; gap: 20px; font-size: 14px; color: var(--text-primary); }
 .admin-checkbox-row label { display: flex; align-items: center; gap: 6px; }
