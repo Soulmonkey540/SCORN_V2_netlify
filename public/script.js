@@ -261,9 +261,14 @@ document.getElementById('checkout-btn').addEventListener('click', async () => {
     const nome = document.getElementById('input-nome')?.value.trim();
     const telefone = document.getElementById('input-telefone')?.value.trim();
     const endereco = document.getElementById('input-endereco')?.value.trim();
+    const cep = document.getElementById('input-cep-frete')?.value.replace(/\D/g, '');
 
     if (!nome || !telefone || !endereco) {
         alert("Preencha nome, telefone e endereço de entrega para continuar.");
+        return;
+    }
+    if (!cep || cep.length !== 8) {
+        alert("Calcule o frete (informe um CEP válido) antes de finalizar.");
         return;
     }
 
@@ -278,7 +283,8 @@ document.getElementById('checkout-btn').addEventListener('click', async () => {
             itensIds: state.carrinho.map(item => item.id),
             nomeCliente: nome,
             telefoneCliente: telefone,
-            enderecoEntrega: endereco
+            enderecoEntrega: endereco,
+            cepDestino: cep,
         };
 
         const response = await fetch(API_URL_CHECKOUT, {
@@ -287,15 +293,18 @@ document.getElementById('checkout-btn').addEventListener('click', async () => {
             body: JSON.stringify(payload)
         });
 
-        const dadosPagamento = await response.json();
+        const dados = await response.json();
 
         if (!response.ok) {
-            throw new Error(dadosPagamento.error || 'Erro ao gerar cobrança PIX');
+            throw new Error(dados.error || 'Erro ao gerar cobrança PIX');
         }
 
-        exibirQrCodePix(dadosPagamento);
+        // O carrinho pode virar mais de um pedido/PIX (um por coleção,
+        // se o carrinho tiver Frosty e Sakami juntos).
+        exibirQrCodePix(dados.pedidos);
 
         state.carrinho = [];
+        state.freteSelecionado = null;
         document.getElementById('cart-count').textContent = '0';
 
     } catch (error) {
@@ -307,20 +316,36 @@ document.getElementById('checkout-btn').addEventListener('click', async () => {
     }
 });
 
-function exibirQrCodePix({ numeroPedido, total, qrCode, qrCodeBase64 }) {
-    const container = document.getElementById('cart-items');
-    const totalFormatado = Number(total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const NOME_COLECAO = { frosty: 'Frosty', sakami: 'Sakami' };
 
-    container.innerHTML = `
-        <div class="pix-container">
-            <h4>Pedido ${numeroPedido}</h4>
-            <p>Escaneie o QR Code abaixo ou use o código "copia e cola" para pagar via PIX.</p>
-            ${qrCodeBase64 ? `<img class="pix-qrcode" src="data:image/png;base64,${qrCodeBase64}" alt="QR Code PIX">` : ''}
-            <p class="pix-total">${totalFormatado}</p>
-            <textarea class="pix-copia-cola" readonly onclick="this.select()">${qrCode || ''}</textarea>
-            <p class="pix-aviso">Assim que o pagamento for confirmado, você receberá a atualização do pedido.</p>
-        </div>
-    `;
+function exibirQrCodePix(pedidos) {
+    const container = document.getElementById('cart-items');
+    const totalGeral = pedidos.reduce((soma, p) => soma + p.total, 0);
+    const totalFormatado = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const maisDeUmPedido = pedidos.length > 1;
+
+    const blocosHtml = pedidos.map(pedido => {
+        const totalPedido = Number(pedido.total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const freteFormatado = Number(pedido.frete).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const tituloColecao = maisDeUmPedido ? ` — ${NOME_COLECAO[pedido.colecao] || pedido.colecao}` : '';
+
+        return `
+            <div class="pix-container">
+                <h4>Pedido ${pedido.numeroPedido}${tituloColecao}</h4>
+                <p>Escaneie o QR Code abaixo ou use o código "copia e cola" para pagar via PIX.</p>
+                ${pedido.qrCodeBase64 ? `<img class="pix-qrcode" src="data:image/png;base64,${pedido.qrCodeBase64}" alt="QR Code PIX">` : ''}
+                <p class="pix-total">${totalPedido}</p>
+                <p class="pix-frete-info">inclui ${freteFormatado} de frete</p>
+                <textarea class="pix-copia-cola" readonly onclick="this.select()">${pedido.qrCode || ''}</textarea>
+            </div>
+        `;
+    }).join('<hr class="pix-divisor">');
+
+    const avisoFinal = maisDeUmPedido
+        ? '<p class="pix-aviso">Seu carrinho teve itens de mais de uma coleção, por isso foram gerados PIX separados — assim que cada pagamento for confirmado, você receberá a atualização daquele pedido.</p>'
+        : '<p class="pix-aviso">Assim que o pagamento for confirmado, você receberá a atualização do pedido.</p>';
+
+    container.innerHTML = blocosHtml + avisoFinal;
     document.getElementById('cart-total-price').textContent = totalFormatado;
 }
 
